@@ -1,0 +1,127 @@
+body {
+  background-color: rgb(42, 42, 42);
+  color: rgb(200, 200, 200);
+}
+
+a {
+  color: #90a0e0;
+  text-decoration-line: none;
+}
+
+p {
+  margin: 0px;
+}
+
+h1 {
+  margin: 0px;
+}
+
+h3 {
+  margin: 0px;
+}
+
+ul {
+  margin: 0px;
+}
+
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+}
+
+.flexrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.vr {
+  border-left: 5px solid #888888;
+  width: 1px;
+}
+
+.box {
+  background-color: rgb(100, 100, 100);
+}
+
+.box img {
+  width: 80%;
+  min-width: 128px;
+  height: auto;
+  display: block;
+}
+
+.def-style {
+  margin: 25px;
+  padding: 15px;
+}
+
+.outer-style {
+  margin-top: 25px;
+  margin-right: 50px;
+  margin-left: 50px;
+  margin-bottom: 25px;
+  padding: 15px;
+  gap: 0px;
+}
+
+.big-side-marigns {
+  margin-left: 125px;
+  margin-right: 125px;
+}
+
+.hidden {
+  display: none;
+}
+
+.radio-label {
+  display: inline-block;
+  padding: 8px 15px;
+  cursor: pointer;
+  border: 2px solid #232323;
+  background-color: #434383;
+}
+
+.radio-element:checked + .radio-label {
+  background-color: #af7ff0;
+}
+
+.default-position {
+  justify-content: start;
+  align-items: start;
+}
+
+.center {
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes spinAnimation {
+  0% {transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);}
+  100% {transform: rotateX(360deg) rotateY(-720deg) rotateZ(360deg);}
+}
+
+.image-spin {
+  height: 10px;
+  width: auto;
+  transform: perspective(300px);
+  animation-name: spinAnimation;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+#shit-part-image {
+  flex: 2;
+}
+
+#shit-part-body {
+  flex: 5;
+}
+
+#shit-part-image-spin {
+  flex: 1;
+}
