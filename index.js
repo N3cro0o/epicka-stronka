@@ -1,7 +1,15 @@
 import initMain from './wasm/output/main/web_page_main_canvas_bin.js';
-import {check_page, change_page_num} from './wasm/output/main/web_page_main_canvas_bin.js';
+import { check_page, change_page_num, change_app_size } from './wasm/output/main/web_page_main_canvas_bin.js';
 
 const welcome_array = ['Welcome stranger!', 'Hey! How -- ah, these pretzels suck...', "Oh... hi. This looks bad. I don't suppose you've seen Abe, have you?"];
+
+function wasm_resize() {
+  console.log("XD1");
+  let c = document.querySelector('canvas');
+  let rect = c.getBoundingClientRect();
+  console.log('canvas html size ', rect.width, rect.height);
+  change_app_size(rect.width, rect.height)
+}
 
 window.onload = function () {
   const size = welcome_array.length;
@@ -23,3 +31,17 @@ document.querySelectorAll('input[name="section"]').forEach( (radio, index) => {
     }
   });
 });
+
+let timeout; 
+window.addEventListener('resize', () => {
+  console.log("XD");
+  clearTimeout(timeout);
+  timeout = setTimeout(wasm_resize, 100);
+});
+
+const waitForCanvas = setInterval(() => {
+  if (document.querySelector('canvas')) {
+    clearInterval(waitForCanvas);
+    wasm_resize(); 
+  }
+}, 200);

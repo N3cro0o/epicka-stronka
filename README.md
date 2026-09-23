@@ -6,6 +6,10 @@
 * ~Layout~
 * Shit part
 * WASM part
+  * WASM-HTML connection
+  * Main layout
+  * Main layout tests
+  * Background shader implementation
 * More to come
 
 ### Techstack
@@ -23,3 +27,7 @@
 #### WASM part
 
 Rust + iced
+
+#### Shader tests
+
+Godot 4

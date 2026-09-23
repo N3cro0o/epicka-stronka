@@ -1,3 +1,6 @@
+// TODO
+// Add window size injector
+
 use wasm_bindgen::prelude::*;
 use super::{HTML_SENDER, Input};
 
@@ -21,3 +24,8 @@ pub fn change_page_num(id: usize) {
     s.try_send(Input::ChangeCurrentPage(id)).unwrap();
 }
 
+#[wasm_bindgen]
+pub fn change_app_size(width: usize, height: usize) {
+    let mut s = HTML_SENDER.get().unwrap().clone();
+    s.try_send(Input::ChangeAppSize((width, height))).unwrap();
+}
