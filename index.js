@@ -4,7 +4,7 @@ import { check_page, change_page_num, change_app_size } from './wasm/output/main
 const welcome_array = ['Welcome stranger!', 'Hey! How -- ah, these pretzels suck...', "Oh... hi. This looks bad. I don't suppose you've seen Abe, have you?"];
 
 function wasm_resize() {
-  console.log("XD1");
+  document.getElementById("about-me-button").checked = true;
   let c = document.querySelector('canvas');
   let rect = c.getBoundingClientRect();
   console.log('canvas html size ', rect.width, rect.height);

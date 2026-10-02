@@ -7,6 +7,7 @@ fn main() -> iced::Result<> {
     let theme = iced::Theme::Dark;
     let app = iced::application(MainLayout::new, MainLayout::update, MainLayout::view)
         .theme(theme)
+        .font(include_bytes!("../../../fonts/BitstromWeraNerdFont-Regular.ttf"))
         .subscription(MainLayout::subscription);
     app.run()
 }
