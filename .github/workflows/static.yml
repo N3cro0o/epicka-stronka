@@ -35,7 +35,7 @@ jobs:
           cargo b --release --target wasm32-unknown-unknown -p web_page_main_canvas
           mkdir output
           mkdir output/main
-          wasm-bindgen --target web --out-dir output\main\  .\target\wasm32-unknown-unknown\release\web_page_main_canvas_bin.wasm
+          wasm-bindgen --target web --out-dir output/main/  ./target/wasm32-unknown-unknown/release/web_page_main_canvas_bin.wasm
 
 
   deploy:
