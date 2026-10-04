@@ -23,7 +23,7 @@ jobs:
 
       - name: Install wasm-bindgen
         run: |
-          cargo install wasm-bindgen --version "0.2.128"
+          cargo install wasm-bindgen-cli --version "0.2.128"
           wasm-bindgen --version
 
       - name: Build and prepare wasm
