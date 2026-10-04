@@ -21,6 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Add WASM target
+        run: rustup target add wasm32-unknown-unknown
+
       - name: Install wasm-bindgen
         run: |
           cargo install wasm-bindgen-cli --version "0.2.128"
