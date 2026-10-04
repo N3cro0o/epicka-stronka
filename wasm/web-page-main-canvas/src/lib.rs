@@ -76,6 +76,7 @@ impl ProjectWidget {
         let mut vec = vec![];
         vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/osrs_ge.png").to_vec()));
         vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/pgne.png").to_vec()));
+        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/tauri.png").to_vec()));
         vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/bachelor.png").to_vec()));
         vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/pincher.jpg").to_vec()));
         vec
@@ -85,6 +86,7 @@ impl ProjectWidget {
         let mut vec = vec![];
         vec.push(String::from("Old School RuneScape Grand Exchange helper tool created using Rust Iced 0.14. I have made this mainly to learn Iced framework and to make a really handy tool for myself (since OSRS is one of my favourites, it was a perferct idea).\nThis app supports checking current and historic prices, compare alchemy prices and create custom recipes. To add a cherry on top, custom notification and logging systems has been prepared. There are even sounds :p."));
         vec.push(String::from("Virtual Pet game made using Godot Engine 4.0. Your main goal is to help your virtual student survive the exam session. Game made for gamedev course during Bachelor course in the span of 4 weeks. This project is one big inside joke and thus a lot of unserious elements were introduced. This game introduced localisation system with English, Polish and Silesian languages."));
+        vec.push(String::from("Internal application project made using Tauri 2.0. The main goal behind this project was creation of new java launcher with update and testing functionality. This software was made during internship for European debt collection agency. This project has shown ins and outs of Java Virtual Machine, multi-environment development, automating development and why everybody hates JVM."));
         vec.push(String::from("IoT project used to calculate distance to target using two towers and triangulation. Prototype was made during Bachelor studies (and thanks to this beauty I graduated). It was made using one central computer and powet source, Raspberry Pi 5, two servos and two camera modules. User can operate thru local network and web control panel. All necessary logic was written by me using rust tide + rppal, React.js and nginx."));
         vec.push(String::from("Rimworld mod introducing new breed of dogs, Pinchers. This mod was made in one month without much help but one very handy and old guide. The main goal was to learn the ins and outs of Rimworld and to learn how to modify already existing applications. New breed after being tamed allows to detect nerby enemies and bark if they are close enough. The main inspiration behind the sprites were my dogs (and I believe they came out cute)."));
         vec
@@ -123,7 +125,7 @@ impl AppPage {
         match self {
             AppPage::AboutMe(val) => { Self::me_view((*val).into(), state) }
             AppPage::Projects => { Self::proj_view(state) }
-            _ => { Self::me_view(0, state) }
+            AppPage::AboutPage => { Self::page_view(state) }
         }   
     }
 
@@ -156,6 +158,7 @@ impl AppPage {
                 iced::widget::image(state.hello_gif_image.clone()).height(Length::Fixed(64.0)),
                 space::vertical(),
                 ].spacing(APP_SPACING)
+                .padding(APP_PADDING)
                 .width(Length::Fixed(w))
                 .height(Length::Fixed(h))
                 .into()
@@ -276,6 +279,7 @@ impl AppPage {
                 space::vertical(),
                 ]
                 .spacing(APP_SPACING)
+                .padding(APP_PADDING)
                 .width(Length::Fixed(w))
                 .height(Length::Fixed(h))
                 .into()
@@ -310,8 +314,32 @@ impl AppPage {
                 rule::horizontal(2.0),
                 scroll,
             ].spacing(APP_SPACING)
+            .padding(APP_PADDING)
             .width(Length::Fill)
             .into()
+    }
+
+    fn page_view(state: &MainLayout) -> Element<'static, MainMessage> {
+        let c = column![            
+                space::vertical().height(Length::Fixed(50.0)),
+                text("How this page was made")
+                    .center()
+                    .size(APP_FONT_SIZE * 2.0 / state.pixel_ratio as f32)
+                    .width(Length::Fill),
+                space::vertical(),
+                space::vertical().height(Length::Fixed(20.0)),
+                text("This page was made using mostly WASM with some basic HTML, CSS and JS wrapper. WASM elements are rendered using canvas elements. The main WASM element (this one :p) was made using rust Iced 0.14 and wasm-bindgen crates. The background was made using [insert desc here].")
+                    .center()
+                    .size(APP_FONT_SIZE / state.pixel_ratio as f32)
+                    .width(Length::Fill),
+                text("The main goal behind this stack was to learn WASM and how to properly handle it. I am not the biggest fan of webdev and I strongly believe most of popular browser sites would be better if they were desktop apps. But these are just my delusions lol. Nowadays all developers need to know at least basics of creating web applications so to recall how things work I made this page. But I decided to only use it as a foundation, a skeleton while WASM elements are the main elements. I used HTML this way as a failsafe when WASM fails to load. Everything is better than blank gray page XD.")
+                    .center()
+                    .size(APP_FONT_SIZE / state.pixel_ratio as f32)
+                    .width(Length::Fill),
+                space::vertical(),
+            ].spacing(APP_SPACING)
+            .padding(APP_PADDING);
+        c.into()
     }
 
     pub fn go_next(&mut self) {
@@ -510,6 +538,11 @@ impl MainLayout {
                                 .go(point_to, instant);
                             js::log(&format!("from: {}, to: {}", point_from, point_to));
                         }
+                    }
+
+                    if let iced::mouse::Event::CursorLeft = mouse {
+                        self.left_trigger.toggle_hover(false);
+                        self.right_trigger.toggle_hover(false);
                     }
                 }
             }

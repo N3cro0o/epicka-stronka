@@ -1,0 +1,10 @@
+[workspace]
+resolver = "3"
+members = ["web-page-main-canvas"]
+
+[workspace.dependencies]
+console_error_panic_hook = "0.1.7"
+iced = {version = "0.14.0", default-features = false, features = ["selector", "tiny-skia", "image", "webgl", "thread-pool", "fira-sans"]}
+wasm-bindgen = "0.2.128"
+wasmtimer = "0.4.3"
+web-sys = "0.3.105"
