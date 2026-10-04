@@ -332,6 +332,13 @@ impl AppPage {
                     .center()
                     .size(APP_FONT_SIZE / state.pixel_ratio as f32)
                     .width(Length::Fill),
+                row![
+                        space::horizontal(),
+                        iced::widget::image(state.html_image.clone()).height(Length::Fixed(128.0)),
+                        iced::widget::image(state.wasm_image.clone()).height(Length::Fixed(128.0)),
+                        space::horizontal(),
+                    ]
+                    .spacing(APP_SPACING),
                 text("The main goal behind this stack was to learn WASM and how to properly handle it. I am not the biggest fan of webdev and I strongly believe most of popular browser sites would be better if they were desktop apps. But these are just my delusions lol. Nowadays all developers need to know at least basics of creating web applications so to recall how things work I made this page. But I decided to only use it as a foundation, a skeleton while WASM elements are the main elements. I used HTML this way as a failsafe when WASM fails to load. Everything is better than blank gray page XD.")
                     .center()
                     .size(APP_FONT_SIZE / state.pixel_ratio as f32)
@@ -430,6 +437,8 @@ pub struct MainLayout {
     window_size: Size,
     pixel_ratio: f64,
     star_image: Handle,
+    html_image: Handle,
+    wasm_image: Handle,
     hello_gif_image: Handle,
     outer_size: Option<Rectangle>,
     me_animation: Animation<f32>,
@@ -481,6 +490,8 @@ impl MainLayout {
         let pixel =  js::get_pixel_ratio().unwrap_or(1.0);
         let bytes = include_bytes!("../../../img/star.png").to_vec();
         let bytes_hullo = include_bytes!("../../../img/hello.gif").to_vec();
+        let bytes_html = include_bytes!("../../../img/site/html.png").to_vec();
+        let bytes_wasm = include_bytes!("../../../img/site/wasm.png").to_vec();
         let m = MainLayout {
             random_u32: 0,
             curr_page: AppPage::default(),
@@ -489,6 +500,8 @@ impl MainLayout {
             window_size: Size::new(640.0, 480.0),
             pixel_ratio: pixel,
             star_image: Handle::from_bytes(bytes),
+            html_image: Handle::from_bytes(bytes_html),
+            wasm_image: Handle::from_bytes(bytes_wasm),
             hello_gif_image: Handle::from_bytes(bytes_hullo),
             outer_size: None,
             me_animation: Animation::new(0.0).duration(std::time::Duration::new(0, 250)),

@@ -4,11 +4,10 @@
 
 * ~Techstack~
 * ~Layout~
-* Shit part
+* ~Shit part~
 * WASM part
-  * WASM-HTML connection
-  * Main layout
-  * Main layout tests
+  * ~WASM-HTML connection~
+  * ~Main layout~
   * Background shader implementation
 * More to come
 
