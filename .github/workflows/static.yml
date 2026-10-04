@@ -37,14 +37,14 @@ jobs:
           mkdir output/main
           wasm-bindgen --target web --out-dir output/main/  ./target/wasm32-unknown-unknown/release/web_page_main_canvas_bin.wasm
       
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
-          path: '.'
-
+          name: wasm
+          path: .
+          exclude: |
+            .git
+            target
 
   deploy:
     needs: build
@@ -53,6 +53,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: wasm
+          path: .
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
