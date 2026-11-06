@@ -2993,6 +2993,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "web_page_background_canvas"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "web_page_main_canvas"
 version = "0.1.0"
 dependencies = [

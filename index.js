@@ -1,4 +1,5 @@
 import initMain from './wasm/output/main/web_page_main_canvas_bin.js';
+import initBg from './wasm/output/bg/web_page_background_canvas.js';
 import { check_page, change_page_num, change_app_size } from './wasm/output/main/web_page_main_canvas_bin.js';
 
 const welcome_array = ['Welcome stranger!', 'Hey! How -- ah, these pretzels suck...', "Oh... hi. This looks bad. I don't suppose you've seen Abe, have you?"];
@@ -18,6 +19,7 @@ window.onload = function () {
 };
 
 await initMain();
+await initBg();
 
 function radio_button_click(id) {
   check_page();
