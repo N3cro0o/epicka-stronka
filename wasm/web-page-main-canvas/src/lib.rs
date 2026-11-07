@@ -512,7 +512,9 @@ impl MainLayout {
 
             MainMessage::AllEvents(e) => {
                 if let iced::Event::Mouse(mouse) = e {
-                    if let iced::mouse::Event::CursorMoved {position: pos} = mouse && self.curr_page != AppPage::Projects{
+                    if let iced::mouse::Event::CursorMoved {position: pos} = mouse && 
+                        (self.curr_page != AppPage::Projects && self.curr_page != AppPage::AboutPage)
+                    {
                         let wind_offset = self.window_size.width * APP_WINDOW_TRIGGER_PERCENT;
                         self.left_trigger.toggle_hover(pos.x < wind_offset);
                         self.right_trigger.toggle_hover(pos.x > self.window_size.width - wind_offset);

@@ -4,7 +4,7 @@ body {
 }
 
 a {
-  color: #af7ff0;
+  color: #f0b0ff;
   font-weight: bold;
   text-decoration-line: none;
 }
@@ -47,9 +47,12 @@ ul {
 }
 
 .box {
-  background-image: radial-gradient(#636363ff 50%, #63636333);
+  background-image: radial-gradient(#6363a3bb 50%, #8363a333);
   border-radius: 2px;
   background-size: cover;
+  border-style: solid;
+  border-color: #eeeeee80;
+  border-width: 2px;
 }
 
 .box img {
