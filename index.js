@@ -18,7 +18,7 @@ window.onload = function () {
   document.getElementById('main-label').innerText = welcome_array[index];
 };
 
-// await initMain();
+await initMain();
 await initBg();
 
 function radio_button_click(id) {

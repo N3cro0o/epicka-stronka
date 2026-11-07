@@ -10,6 +10,9 @@ extern "C" {
 
     #[wasm_bindgen(js_namespace = console)]
     pub fn log(s: &str);
+
+    #[wasm_bindgen(js_namespace = Math)]
+    pub fn random() -> f32;
 }
 
 pub fn get_pixel_ratio() -> Result<f64, String> {
@@ -24,4 +27,16 @@ pub fn get_page_size() -> Result<(u32, u32), String> {
     let h = height.as_f64().unwrap_or(1080.0);
     let w = width.as_f64().unwrap_or(1920.0);
     Ok((w as u32, h as u32))
+}
+
+pub fn request_animation_frame(closure: &Closure<dyn FnMut() -> ()>) {
+    window().expect("Cannot get window")
+        .request_animation_frame(closure.as_ref().unchecked_ref())
+        .expect("register should be a OK");
+}
+
+pub fn random_i32() -> i32 {
+    let f = random();
+    let u = (f * 10000.0) as i32;
+    u
 }

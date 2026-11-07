@@ -1,10 +1,16 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use wasm_bindgen::prelude::*;
-use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader};
+use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader, WebGlTexture, HtmlImageElement};
 
 mod js;
 
 #[wasm_bindgen(start)]
 fn start() -> Result<(), JsValue> {
+    let base_cell = Rc::new(RefCell::new(None));
+    let clone_cell = base_cell.clone();
+
     let document = web_sys::window().unwrap().document().unwrap();
     let canvas = document.get_element_by_id("bg-canvas").unwrap();
     let mut canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
@@ -45,18 +51,19 @@ fn start() -> Result<(), JsValue> {
         const vec4 bg_space_bg = vec4(0.05, 0.0, 0.2, 1.0);
         const vec4 bg_nebula_colour1 = vec4(0.2, 0.0, 0.5, 1.0);
         const vec4 bg_nebula_colour2 = vec4(0.4, 0.0, 0.3, 1.0);
-        const float bg_nebula_visibility = 0.2;
-        const vec2 bg_nebula_speed = vec2(0.1, 1);
+        const float bg_nebula_visibility = 0.3;
+        const vec2 bg_nebula_speed = vec2(0.2, 1);
 
         uniform sampler2D bg_noise_texture;
 
-        const int star_seed = 0;
+        uniform int star_seed;
+
         const int iterations = 2;
-        const float star_frequency = 0.99;
-        const vec2 star_speed = vec2(-0.1, 0.2);
+        const float star_frequency = 0.90;
+        const vec2 star_speed = vec2(-0.1, -0.2);
         const float star_brightness = 0.85;
 
-        const float star_size = 100.0;
+        const float star_size = 120.0;
 
         float rand(vec2 st, float seed) {
           return fract(sin(dot(st.xy, vec2(seed + 12.9898, 78.233))) * 43758.5453123);
@@ -78,7 +85,7 @@ fn start() -> Result<(), JsValue> {
           // BG
           vec4 BG = bg_space_bg;
           outColor = BG;
-          vec2 inv_fragcoord = vec2(gl_FragCoord.x * SCREEN_PIXEL_SIZE.x, gl_FragCoord.y * SCREEN_PIXEL_SIZE.y);
+          vec2 inv_fragcoord = vec2(gl_FragCoord.x / SCREEN_PIXEL_SIZE.x, gl_FragCoord.y / SCREEN_PIXEL_SIZE.y);
           vec2 travel1 = TIME * bg_nebula_speed / 15.0;
           vec4 nebula1 = texture(bg_noise_texture, inv_fragcoord + travel1);
           vec2 travel2 = TIME * -bg_nebula_speed / 25.0;
@@ -117,8 +124,20 @@ fn start() -> Result<(), JsValue> {
         1.0, -1.0, 0.0,
         1.0, 1.0, 0.0
     ];
+    let seed: i32 = js::random_i32();
+    let texture = load_texture(&context, "noise.png")?;
 
     let position_attribute_location = context.get_attrib_location(&program, "position");
+    let seed_attribute_location = context.get_uniform_location(&program, "star_seed");
+    let time_attribute_location = context.get_uniform_location(&program, "TIME");
+    let size_attribute_location = context.get_uniform_location(&program, "SCREEN_PIXEL_SIZE");
+    let noise_attribute_location = context.get_uniform_location(&program, "bg_noise_texture");
+
+    context.uniform1i(seed_attribute_location.as_ref(), seed);
+    context.active_texture(WebGl2RenderingContext::TEXTURE0);
+    context.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
+    context.uniform1i(noise_attribute_location.as_ref(), 0);
+
     let buffer = context.create_buffer().ok_or("Failed to create buffer")?;
     context.bind_buffer(WebGl2RenderingContext::ARRAY_BUFFER, Some(&buffer));
 
@@ -154,12 +173,27 @@ fn start() -> Result<(), JsValue> {
         0,
     );
     context.enable_vertex_attrib_array(position_attribute_location as u32);
-
     context.bind_vertex_array(Some(&vao));
 
-    let vert_count = (vertices.len() / 3) as i32;
-    draw(&context, vert_count);
+    let mut time = 0.0;
 
+    let context_clone = context.clone();
+    *clone_cell.borrow_mut() = Some(Closure::new(move || {
+        let screen_size = js::get_page_size().unwrap();
+        time += 0.01;
+        context_clone.uniform1f(time_attribute_location.as_ref(), time);
+        context_clone.uniform2f(size_attribute_location.as_ref(), screen_size.0 as f32, screen_size.1 as f32);
+        context_clone.active_texture(WebGl2RenderingContext::TEXTURE0);
+        context_clone.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
+        context_clone.uniform1i(noise_attribute_location.as_ref(), 0);
+        let vert_count = (vertices.len() / 3) as i32;
+        draw(&context_clone, vert_count);
+
+        js::request_animation_frame(base_cell.borrow().as_ref().unwrap());
+    }));
+    // let vert_count = (vertices.len() / 3) as i32;
+    // draw(&context, vert_count);
+    js::request_animation_frame(clone_cell.borrow().as_ref().unwrap());
     Ok(())
 }
 
@@ -214,4 +248,47 @@ pub fn link_program(context: &WebGl2RenderingContext, vert_shader: &WebGlShader,
             .get_program_info_log(&program)
             .unwrap_or_else(|| String::from("Unknown error creating program object")))
     }
+}
+
+pub fn load_texture(context: &WebGl2RenderingContext, img: &str) -> Result<WebGlTexture, JsValue>{
+   let texture = context.create_texture().ok_or("Failed to create texture")?;
+   context.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
+   context.tex_parameteri(
+       WebGl2RenderingContext::TEXTURE_2D,
+       WebGl2RenderingContext::TEXTURE_WRAP_S,
+       WebGl2RenderingContext::REPEAT as i32
+   );
+   context.tex_parameteri(
+       WebGl2RenderingContext::TEXTURE_2D,
+       WebGl2RenderingContext::TEXTURE_WRAP_T,
+       WebGl2RenderingContext::REPEAT as i32
+   );
+   context.tex_parameteri(
+       WebGl2RenderingContext::TEXTURE_2D,
+       WebGl2RenderingContext::TEXTURE_MIN_FILTER,
+       WebGl2RenderingContext::LINEAR as i32
+   );
+   context.tex_parameteri(
+       WebGl2RenderingContext::TEXTURE_2D,
+       WebGl2RenderingContext::TEXTURE_MAG_FILTER,
+       WebGl2RenderingContext::LINEAR as i32
+   );
+
+   let image = HtmlImageElement::new()?;
+   let (image_clone, context_clone, texture_clone) = (image.clone(), context.clone(), texture.clone());
+   let on_load = Closure::<dyn FnMut()>::new(move || {
+        context_clone.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture_clone));
+        context_clone.tex_image_2d_with_u32_and_u32_and_html_image_element(
+            WebGl2RenderingContext::TEXTURE_2D,
+            0,
+            WebGl2RenderingContext::RGBA as i32,
+            WebGl2RenderingContext::RGBA,
+            WebGl2RenderingContext::UNSIGNED_BYTE,
+            &image_clone
+        );
+   });
+   image.set_onload(Some(on_load.as_ref().unchecked_ref()));
+   on_load.forget();
+   image.set_src(img);
+   Ok(texture)
 }

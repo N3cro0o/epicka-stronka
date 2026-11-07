@@ -8,13 +8,17 @@
 * WASM part
   * ~WASM-HTML connection~
   * ~Main layout~
-  * Background shader implementation
+  * ~Background shader implementation~
+  * Remove not working gif in iced wasm
+  * Add gradient background to iced wasm
 * ~More to come~
-* Background shader
+* ~Background shader~
   * ~Create canvas element~
   * ~Translate Godot shader to WebGL2 shader~
-  * Implement TIME variable
-  * Include noise texture
+  * ~Implement TIME variable~
+  * ~Include noise texture~
+* Change HTML design
+* Change Github actions workflow to implement background wasm
 
 ### Techstack
 
