@@ -1,4 +1,5 @@
-use iced::{stream, Animation, Rectangle, Element, Length, Subscription, Pixels, Size, Task};
+use iced::{stream, Animation, Rectangle, Fill, Element, Length, Subscription, Pixels, Size, Task, Color, Radians, Theme, Background};
+use iced::gradient;
 use iced::widget::{selector, stack, table, scrollable, space, text, container, center, row, column, mouse_area, rule};
 use iced::widget::container::Container;
 use iced::widget::image::Handle;
@@ -62,9 +63,9 @@ impl ProjectWidget {
         .into()
     }
 
-    pub fn project_vec() -> Vec<Self> {
+    pub fn project_vec(state: &MainLayout) -> Vec<Self> {
         let mut vec = vec![];
-        let handle_vec = Self::image_handle_vec();
+        let handle_vec = state.project_handles_vec.clone();
         let desc_vec = Self::desc_vec();
         for i in 0..handle_vec.len() {
             vec.push(Self{image: handle_vec[i].clone(), desc: desc_vec[i].clone()});
@@ -72,15 +73,6 @@ impl ProjectWidget {
         vec
     }
 
-    fn image_handle_vec() -> Vec<Handle> {
-        let mut vec = vec![];
-        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/osrs_ge.png").to_vec()));
-        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/pgne.png").to_vec()));
-        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/tauri.png").to_vec()));
-        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/bachelor.png").to_vec()));
-        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/pincher.jpg").to_vec()));
-        vec
-    }
 
     fn desc_vec() -> Vec<String> {
         let mut vec = vec![];
@@ -155,7 +147,7 @@ impl AppPage {
                     .center()
                     .size(APP_FONT_SIZE / state.pixel_ratio as f32)
                     .width(Length::Fill),
-                iced::widget::image(state.hello_gif_image.clone()).height(Length::Fixed(64.0)),
+                // iced::widget::image(state.hello_gif_image.clone()).height(Length::Fixed(64.0)),
                 space::vertical(),
                 ].spacing(APP_SPACING)
                 .padding(APP_PADDING)
@@ -291,7 +283,7 @@ impl AppPage {
     }
 
     fn proj_view(state: &MainLayout) -> Element<'static, MainMessage> {
-        let handle_vec = ProjectWidget::project_vec();
+        let handle_vec = ProjectWidget::project_vec(state);
         let mut element_vec = vec![];
         for project in handle_vec.iter() {
             element_vec.push(project.view(state));
@@ -442,6 +434,7 @@ pub struct MainLayout {
     hello_gif_image: Handle,
     outer_size: Option<Rectangle>,
     me_animation: Animation<f32>,
+    project_handles_vec: Vec<Handle>,
 }
 
 #[cfg(target_family = "wasm")]
@@ -505,6 +498,7 @@ impl MainLayout {
             hello_gif_image: Handle::from_bytes(bytes_hullo),
             outer_size: None,
             me_animation: Animation::new(0.0).duration(std::time::Duration::new(0, 250)),
+            project_handles_vec: Self::image_handle_vec(),
         };
         (m, selector::find(iced::widget::Id::new("outer_container")).map(MainMessage::GetContainerSize))
     }
@@ -626,6 +620,16 @@ impl MainLayout {
         iced::Task::none()
     }
 
+    fn image_handle_vec() -> Vec<Handle> {
+        let mut vec = vec![];
+        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/osrs_ge.png").to_vec()));
+        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/pgne.png").to_vec()));
+        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/tauri.png").to_vec()));
+        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/bachelor.png").to_vec()));
+        vec.push(Handle::from_bytes(include_bytes!("../../../img/projects/pincher.jpg").to_vec()));
+        vec
+    }
+
     pub fn view(&self) -> Element<'_, MainMessage> {
         let main; 
         if self.outer_size.is_none() {
@@ -641,7 +645,21 @@ impl MainLayout {
             space::horizontal().width(Length::FillPortion(2)),
             self.right_trigger.view(),
         ]).id(iced::widget::Id::new("outer_container"));
+        let gradient = container(space::horizontal())
+            .center(Fill)
+            .style(|_theme: &Theme| {
+                let linear = gradient::Linear::new(Radians(45.0_f32.to_radians()))
+                    .add_stop(0.0, Color::from_rgb8(0x17, 0x1f, 0x41))
+                    .add_stop(0.5, Color::from_rgb8(0x31, 0x1d, 0x4a))
+                    .add_stop(1.0, Color::from_rgb8(0x17, 0x1f, 0x41));
+ 
+                container::Style {
+                    background: Some(Background::Gradient(gradient::Gradient::Linear(linear))),
+                    ..container::Style::default()
+                }
+            });
         stack![
+                gradient,
                 main,
                 overlay,
             ]
