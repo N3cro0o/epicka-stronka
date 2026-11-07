@@ -32,10 +32,12 @@ jobs:
       - name: Build and prepare wasm
         working-directory: ./wasm
         run: |
-          cargo b --release --target wasm32-unknown-unknown -p web_page_main_canvas
+          cargo b --release --target wasm32-unknown-unknown
           mkdir output
           mkdir output/main
+          mkdir output/bg
           wasm-bindgen --target web --out-dir output/main/  ./target/wasm32-unknown-unknown/release/web_page_main_canvas_bin.wasm
+          wasm-bindgen --target web --out-dir output/bg/  ./target/wasm32-unknown-unknown/release/web_page_background_canvas.wasm
       
       - name: Upload artifact
         uses: actions/upload-artifact@v7

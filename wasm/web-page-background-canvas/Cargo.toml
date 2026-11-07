@@ -1,0 +1,30 @@
+[package]
+name = "web_page_background_canvas"
+version = "0.1.0"
+edition = "2024"
+authors = ["N3cro0o"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+console_error_panic_hook = {workspace = true}
+wasm-bindgen = {workspace = true}
+web-sys = {
+  workspace = true,
+  features = [
+    "Document",
+    "Element",  
+    "HtmlCanvasElement",
+    "HtmlImageElement",
+    "WebGlBuffer",
+    "WebGlVertexArrayObject",
+    "WebGl2RenderingContext",
+    "WebGlUniformLocation",
+    "WebGlTexture",
+    "WebGlProgram",
+    "WebGlShader",
+    "Window",
+  ] 
+}
+js-sys = { workspace = true }
