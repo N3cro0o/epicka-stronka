@@ -320,7 +320,7 @@ impl AppPage {
                     .width(Length::Fill),
                 space::vertical(),
                 space::vertical().height(Length::Fixed(20.0)),
-                text("This page was made using mostly WASM with some basic HTML, CSS and JS wrapper. WASM elements are rendered using canvas elements. The main WASM element (this one :p) was made using rust Iced 0.14 and wasm-bindgen crates. The background was made using [insert desc here].")
+                text("This page was made using mostly WASM with some basic HTML, CSS and JS wrapper. WASM elements are rendered using canvas elements. The main WASM element (this one :p) was made using rust Iced 0.14 and wasm-bindgen crates. The background was made using web-sys and WebGL technology. Before this shader was implemented here, Godot shading language was the used to experiment and create something 'cool'. Godot shading language and GLSL are very similar so translating process was effortless. For now time parameter was implemented using basic incrementation but it can be enchanced by implementing delta time paremeter. But for now, it looks good enough :).")
                     .center()
                     .size(APP_FONT_SIZE / state.pixel_ratio as f32)
                     .width(Length::Fill),
